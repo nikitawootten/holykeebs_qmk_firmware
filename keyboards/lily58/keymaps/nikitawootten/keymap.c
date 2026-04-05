@@ -28,6 +28,7 @@ enum layer_number {
   _LOWER,
   _RAISE,
   _ADJUST,
+  _CLEAN,
 };
 
 #define RAISE MO(_RAISE)
@@ -117,19 +118,42 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------.    ,-------|      |      |      |      |      |      |
- * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+ * |------+------+------+------+------+------| CLEAN |    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      |      |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *                   |LOWER | LGUI | Alt  | /Space  /       \Enter \  |BackSP| RGUI |RAISE |
  *                   |      |      |      |/       /         \      \ |      |      |      |
  *                   `----------------------------'           '------''--------------------'
+ *  Note: [ = TG(Clean)
  */
   [_ADJUST] = LAYOUT(
     XXXXXXX,      XXXXXXX,    XXXXXXX,    XXXXXXX,      XXXXXXX, XXXXXXX,                        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
     QK_BOOT,      HK_DUMP,    HK_SAVE,    HK_RESET,     XXXXXXX, HK_C_SCROLL,                    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,
     QK_C_EEPROM,  HK_P_SET_D, HK_P_SET_S, HK_P_SET_BUF, XXXXXXX, HK_S_MODE_T,                    KC_UP,   KC_DOWN, XXXXXXX, XXXXXXX, XXXXXXX, QK_C_EEPROM,
-    KC_LSFT,      XXXXXXX,    XXXXXXX,    XXXXXXX,      XXXXXXX, HK_D_MODE_T, XXXXXXX,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+    KC_LSFT,      XXXXXXX,    XXXXXXX,    XXXXXXX,      XXXXXXX, HK_D_MODE_T, TG(_CLEAN),  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                                                    _______, _______, _______, _______,  _______, _______, _______, _______
+  ),
+
+/* CLEAN
+ * ,-----------------------------------------.                    ,-----------------------------------------.
+ * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * |      |   A  |   S  |   D  |   F  |      |-------.    ,-------|      |   J  |   K  |   L  |   ;  |      |
+ * |------+------+------+------+------+------| BASE  |    |       |------+------+------+------+------+------|
+ * |LShift|      |      |      |      |      |-------|    |-------|      |      |      |      |      |RShift|
+ * `-----------------------------------------/       /     \      \-----------------------------------------'
+ *                   |LCtrl | LGUI | Alt  | /Space  /       \Enter \  |BackSP| RGUI |RCtrl |
+ *                   |      |      |      |/       /         \      \ |      |      |      |
+ *                   `-------------------''-------'           '------''--------------------'
+ */
+  [_CLEAN] = LAYOUT(
+    _______, _______, _______, _______, _______, _______,                        _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______,                        _______, _______, _______, _______, _______, _______,
+    _______, KC_A,    KC_S,    KC_D,    KC_F,    _______,                        _______, KC_J,    KC_K,    KC_L,    KC_SCLN, _______,
+    KC_LSFT, _______, _______, _______, _______, _______, TG(_CLEAN),  _______, _______, _______, _______, _______, _______, KC_RSFT,
+                               KC_LCTL, _______, _______, _______,      _______, _______, _______, KC_RCTL
   )
 };
 
@@ -221,6 +245,9 @@ bool oled_task_user(void) {
         break;
     case _ADJUST:
         oled_write_ln_P(PSTR("Adjust"), false);
+        break;
+    case _CLEAN:
+        oled_write_ln_P(PSTR("Clean"), false);
         break;
     default:
         oled_write_ln_P(PSTR("Undefined"), false);
